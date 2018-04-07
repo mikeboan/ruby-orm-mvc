@@ -1,5 +1,8 @@
 source "https://rubygems.org"
 
 gem 'activesupport'
-gem 'rspec', '~> 3.1.0'
 gem 'sqlite3'
+
+group :development, :test do
+  gem 'byebug'
+end
