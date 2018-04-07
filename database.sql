@@ -86,3 +86,54 @@ VALUES
   (42, "The Long and Winding Road", 2),
   (43, "For You Blue", 2),
   (44, "Get Back", 2);
+
+
+
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
+
+DROP TABLE IF EXISTS memberships;
+
+CREATE TABLE memberships (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  group_id INTEGER NOT NULL,
+
+  FOREIGN KEY(user_id) REFERENCES users(id)
+  FOREIGN KEY(group_id) REFERENCES groups(id)
+);
+
+DROP TABLE IF EXISTS groups;
+
+CREATE TABLE groups (
+  id INTEGER PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  admin_id INTEGER NOT NULL,
+
+  FOREIGN KEY(admin_id) REFERENCES users(id)
+);
+
+INSERT INTO
+  users (id, name)
+VALUES
+  (1, "User 1"), (2, "User 2"), (3, "User 3");
+
+INSERT INTO
+  groups (id, title, admin_id)
+VALUES
+  (1, "First Group", 1),
+  (2, "Second Group", 1),
+  (3, "Third Group", 2);
+
+INSERT INTO
+  memberships (id, user_id, group_id)
+VALUES
+  (1, 1, 1),
+  (2, 1, 2),
+  (3, 2, 3),
+  (4, 2, 2),
+  (5, 3, 3);
