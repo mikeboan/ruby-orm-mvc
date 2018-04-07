@@ -1,7 +1,10 @@
 require_relative 'db_connection'
+require_relative 'searchable'
 require 'active_support/inflector'
 
 class SQLObject
+  extend Searchable
+
   def self.columns
     @columns ||= DBConnection.execute2(<<-SQL).first.map(&:to_sym)
       SELECT
