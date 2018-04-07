@@ -27,7 +27,7 @@ class User < SQLObject
 
   has_many :memberships
 
-  has_many_through :groups, :memberships, :groups
+  has_many :groups, through: :memberships, source: :groups
 end
 
 class Membership < SQLObject
@@ -42,8 +42,8 @@ class Group < SQLObject
 
   has_many :memberships
 
-  has_many_through :users, :memberships, :user
+  has_many :users, through: :memberships
 
   # groups my admin also owns
-  has_many_through :sibling_groups, :admin, :owned_groups
+  has_many :sibling_groups, through: :admin, source: :owned_groups
 end

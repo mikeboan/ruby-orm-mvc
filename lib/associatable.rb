@@ -43,13 +43,17 @@ module Associatable
   end
 
   def has_many(name, options = {})
-    self.assoc_options[name] = HasManyOptions.new(name, self.to_s, options)
+    if options.keys.include?(:through)
+      has_many_through(name, options[:through], options[:source])
+    else
+      self.assoc_options[name] = HasManyOptions.new(name, self.to_s, options)
 
-    define_method(name) do
-      options = self.class.assoc_options[name]
-      primary_key = self.send(options.primary_key)
+      define_method(name) do
+        options = self.class.assoc_options[name]
+        primary_key = self.send(options.primary_key)
 
-      options.model_class.where(options.foreign_key => primary_key)
+        options.model_class.where(options.foreign_key => primary_key)
+      end
     end
   end
 
@@ -79,7 +83,15 @@ module Associatable
   def has_many_through(name, through_name, source_name)
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
-      source_options = through_options.model_class.assoc_options[source_name]
+
+      if source_name
+        source_options = through_options.model_class.assoc_options[source_name]
+      else
+        singular_name = name.to_s.singularize.to_sym
+
+        source_options = through_options.model_class.assoc_options[name] ||
+          through_options.model_class.assoc_options[singular_name]
+      end
 
       if (through_options.is_a?(HasManyOptions) && source_options.is_a?(HasManyOptions))
         fk_table    = source_options.table_name
